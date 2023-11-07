@@ -7,12 +7,23 @@ function getComputerSelection() {
 	return randomFromArray(selections);
 }
 
+function addToLog(text) {
+	let li = document.createElement("li");
+	li.textContent = text;
+	logList.appendChild(li);
+}
+
 function playRound(playerSelection, computerSelection) {
-	let win = undefined;
+	if (playerScore >= 5 || computerScore >= 5) {
+		return;
+	}
 
 	if (playerSelection == computerSelection) {
-		return `It's a draw!`;
+		addToLog(`It's a draw!`);
+		return;
 	}
+
+	let win = undefined;
 
 	if (playerSelection == "rock") {
 		if (computerSelection == "scissors") {
@@ -42,39 +53,35 @@ function playRound(playerSelection, computerSelection) {
 
 	if (win) {
 		playerScore++;
-		return `You Win! ${playerSelection} beats ${computerSelection}!`;
+		playerScoreText.textContent = playerScore;
+		addToLog(`You Win! ${playerSelection} beats ${computerSelection}!`);
 	} else {
 		computerScore++;
-		return `You Lose! ${playerSelection} beats ${computerSelection}!`;
+		computerScoreText.textContent = computerScore;
+		addToLog(`You Lose! ${playerSelection} beats ${computerSelection}!`);
+	}
+
+	if (playerScore >= 5) {
+		addToLog("You Win!!");
+	}
+	if (computerScore >= 5) {
+		addToLog("Computer Win!!");
 	}
 }
 
-function game() {
-	let playerSelection = "";
-
-	while (
-		playerSelection != "rock" &&
-		playerSelection != "paper" &&
-		playerSelection != "scissors"
-	) {
-		playerSelection = prompt(
-			"Enter your selection ('rock', 'paper', 'scissors'): "
-		).toLowerCase();
-		computerSelection = getComputerSelection();
-	}
-
-	console.log(playRound(playerSelection, computerSelection));
-}
+let rock = document.querySelector(".rock");
+let paper = document.querySelector(".paper");
+let scissors = document.querySelector(".scissors");
+let playerScoreText = document.querySelector(".player-score");
+let computerScoreText = document.querySelector(".computer-score");
+let logList = document.querySelector(".log-list");
 
 let computerScore = 0;
 let playerScore = 0;
 
-while (playerScore < 3 && computerScore < 3) {
-	game();
-}
-
-if (playerScore > computerScore) {
-	console.log(`Player Wins!`);
-} else {
-	console.log(`Computer Wins!`);
-}
+document.querySelectorAll(".selection").forEach((element) =>
+	element.addEventListener("click", (event) => {
+		let playerSelection = event.target.textContent.toLowerCase();
+		console.log(playRound(playerSelection, getComputerSelection()));
+	})
+);
